@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>R Barcode</title>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/JsBarcode.all.min.js"></script>
+  <script src="js/saveSvgAsPng.js"></script>
+  <style>
+    .container {
+      margin-top: 20px;
+    }
+
+    .form-check {
+      margin-right: 20px;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="container">
+    <div class="jumbotron">
+      <h1 class="display-4">Hello dude!</h1>
+      <p class="lead">Gen R Barcode</p>
+      <hr class="my-4">
+      <p class="lead">
+        <label>Type bar code number</label>
+        <input type="text" class="form-control" id="input" placeholder="Barcode">
+      </p>
+      <p>
+        <svg id="barcode"></svg>
+      </p>
+      <p>
+        <div class="form-row">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="CODE128" checked>
+            <label class="form-check-label" for="exampleRadios1">
+              CODE 128(default)
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="CODE39">
+            <label class="form-check-label" for="exampleRadios2">
+              CODE 39
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios3" value="EAN13">
+            <label class="form-check-label" for="exampleRadios3">
+              EAN / UPC
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios4" value="ITF">
+            <label class="form-check-label" for="exampleRadios4">
+              ITF
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios5" value="MSI">
+            <label class="form-check-label" for="exampleRadios5">
+              MSI
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios6" value="pharmacode">
+            <label class="form-check-label" for="exampleRadios6">
+              Pharmacode
+            </label>
+          </div>
+        </div>
+      </p>
+      <p>
+        <a id="btn" class="btn btn-primary btn-lg" href="#" role="button">Gen</a>
+        <a id="btndownload" class="btn btn-primary btn-lg" href="#" role="button">Download</a>
+      </p>
+    </div>
+  </div>
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Notify</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div id="modalBody" class="modal-body">
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function setModal(title, body) {
+      $("#modalBody").text(title + " need type " + body + " letters.");
+      $('#myModal').modal('show');
+    }
+    $("#btn").click(() => {
+      const temp = $("#input").val();
+      const tempFormat = $('input[name*=exampleRadios]:checked').val();
+      switch (tempFormat) {
+        case "EAN13":
+          if (temp.length !== 12) {
+            setModal("EAN/UPC", "12");
+            return;
+          }
+          break;
+        case "ITF":
+          if (temp.length !== 6) {
+            setModal("ITF", "6");
+            return;
+          }
+          break;
+        case "MSI":
+          if (temp.length < 2 || temp.length > 6) {
+            setModal("MSI", "2 - 6");
+            return;
+          }
+          break;
+        case "pharmacode":
+          if (temp.length < 2 || temp.length > 6) {
+            setModal("Pharmacode", "2 - 6");
+            return;
+          }
+          break;
+        default:
+          break;
+      }
+      if (temp) {
+        JsBarcode("#barcode", temp, {
+          format: tempFormat,
+          lineColor: "black",
+          width: 2,
+          height: 40,
+          displayValue: true
+        });
+      }
+    })
+
+    $("#btndownload").click(() => {
+      const temp = $("#input").val();
+      if (temp) {
+        saveSvgAsPng(document.getElementById("barcode"), "barcode.png");
+      }
+    })
+  </script>
+</body>
+
+</html>
