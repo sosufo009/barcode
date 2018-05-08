@@ -82,6 +82,8 @@
       </p>
     </div>
   </div>
+  <div class="container" id="history">
+  </div>
   <!-- Modal -->
   <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -138,6 +140,9 @@
           break;
       }
       if (temp) {
+        const tempDate = Date.now().toString();
+        const tempCard = `<div class="card" style="display:inline-block;"><div class="card-body"><h5 class="card-title">${temp}</h5><div style="min-height:1px;"><svg id="temp${tempDate}"></svg></div></div></div>`
+        $("#history").append(tempCard);
         JsBarcode("#barcode", temp, {
           format: tempFormat,
           lineColor: "black",
@@ -145,6 +150,16 @@
           height: 40,
           displayValue: true
         });
+        setTimeout(() => {
+          const tempDom = "#temp" + tempDate;
+          JsBarcode(tempDom, temp, {
+            format: tempFormat,
+            lineColor: "black",
+            width: 1,
+            height: 40,
+            displayValue: true
+          });
+        }, 100)
       }
     })
 
